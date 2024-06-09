@@ -4,9 +4,10 @@ import tkinter as tk
 from tkinter import  font #custom fontlar için lazım.
 import datetime
 import time
+import asyncio #asenkron işlemler için
 import locale
 import sqlite3
-from tkinter import messagebox #Kullanıcıya mesaj göndermek için
+from tkinter import simpledialog,messagebox #Kullanıcıya mesaj göndermek için
 
 from tkinter import ttk #Tkinter'ın temel modülüne ek olarak, ttk modülü daha gelişmiş ve özelleştirilebilir GUI bileşenlerini sağlar.
 
@@ -18,7 +19,7 @@ conn2 = http.client.HTTPSConnection("api.collectapi.com") #Altın için
 
 headers = {
     'content-type': "application/json",
-    'authorization': "apikey 1jv93Y9uyo8XORLVQceeMg:4MYbMs9q4753q3YybS4V1P"
+    'authorization': "apikey 0o8b4AIoUpmBnQLm8mCOwB:4WX1nyxRV99VnhgsDmM8tr"
 
     }
 
@@ -79,7 +80,7 @@ formattedDate = now.strftime("%d %B %Y, %H:%M")
 
 #Pencere oluşumu
 pencere = tk.Tk()
-pencere.geometry("930x720")
+pencere.geometry("950x720")
 pencere.title("Varlıklarım Uygulaması") #En tepedeki pencere titlesi
 
 
@@ -140,20 +141,24 @@ cur.execute('''INSERT INTO Tarihler(date,value)
 VALUES(?, ?)''',(formattedDate,toplamVarlıklar))
 tablo.commit()
 toplamVarlıklar = türkLirası + döviz + altın
+cur.execute("""UPDATE Tarihler
+       SET value = ?
+       WHERE date = ?
+       """, (toplamVarlıklar, f"{formattedDate}"))
+tablo.commit()
 
-#SQL Verilerini update etmek (ekleme çıkarma işlemlerinde)
-def updateDatas():
-    pass
+
+
 
 
 
 #Her güncellemede çağrılcak func
 def canvasFunc():
-    arc = myCanvas.create_arc(coord, start=0, extent=((türkLirası * 360) / toplamVarlıklar) - 0.0001, fill="red")
-    arv2 = myCanvas.create_arc(coord, start=((türkLirası * 360) / toplamVarlıklar),
-                               extent=((döviz * 360) / toplamVarlıklar), fill="blue")
-    arv3 = myCanvas.create_arc(coord, start=((döviz * 360) / toplamVarlıklar) + ((türkLirası * 360) / toplamVarlıklar)- 0.0001,
-                               extent=((altın * 360) / toplamVarlıklar)- 0.0001, fill="yellow")
+    arc = myCanvas.create_arc(coord, start=0, extent=((türkLirası * 360) / toplamVarlıklar-0.0001) - 0.0001, fill="red")
+    arv2 = myCanvas.create_arc(coord, start=((türkLirası * 360) / toplamVarlıklar - 0.0001),
+                               extent=((döviz * 360) / toplamVarlıklar - 0.001), fill="blue")
+    arv3 = myCanvas.create_arc(coord, start=((döviz * 360) / toplamVarlıklar - 0.001) + ((türkLirası * 360) / toplamVarlıklar - 0.001)- 0.0001,
+                               extent=((altın * 360) / toplamVarlıklar - 0.001)- 0.0001, fill="yellow")
 
 
 
@@ -179,18 +184,53 @@ def butonTlParaYatır():
        tablo.commit()
        global  toplamVarlıklar
        toplamVarlıklar = türkLirası + döviz + altın
+       cur.execute("""UPDATE Tarihler
+           SET value = ?
+           WHERE date = ?
+           """, (toplamVarlıklar, f"{formattedDate}"))
+       tablo.commit()
        etiket3.config(text=f"{toplamVarlıklar} Türk Lirası")
        etiket5.config(text=f"{türkLirası} Türk Lirası")
 
     else:
         print("olmaz")
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
+    canvasFunc()
     entryTl.delete(0, tk.END)
     entryTl.insert(0, "")
     entryTl.config(fg="black")
 
 
+
+
 def butonTlParaCek():
     print("tl çek")
+    if entryTl.get().isdigit() and entryTl.get() != "0":
+        global türkLirası
+        if türkLirası >= int(entryTl.get()):
+            türkLirası -= int(entryTl.get())
+            cur.execute("""UPDATE Paramız
+                SET value = ?
+                WHERE name = ?
+                """, (türkLirası, "Türk Lirası"))
+            tablo.commit()
+            global toplamVarlıklar
+            toplamVarlıklar = türkLirası + döviz + altın
+            cur.execute("""UPDATE Tarihler
+            SET value = ?
+            WHERE date = ?
+            """, (toplamVarlıklar, f"{formattedDate}"))
+            tablo.commit()
+            etiket3.config(text=f"{toplamVarlıklar} Türk Lirası")
+            etiket5.config(text=f"{türkLirası} Türk Lirası")
+        else:
+            messagebox.showerror("HATA", "Yeterli Para Yok")
+    else:
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
+    if toplamVarlıklar == 0:
+        arc = myCanvas.create_arc(coord, start=0, extent=359.99, fill="white")
+    else:
+        canvasFunc()
     entryTl.delete(0, tk.END)
     entryTl.insert(0, "")
     entryTl.config(fg="black")
@@ -198,29 +238,115 @@ def butonTlParaCek():
 
 def butonDovizParaYatır():
     print("döviz yaıtr")
+
+    if entryDöviz.get().isdigit() and entryDöviz.get() != "0":
+        options = []
+        for i in myDatas:
+            options.append(i[1])
+        loweroptions = [s.lower() for s in options]
+
+        selectedOption = simpledialog.askstring("Hesaba Yatırılcak Döviz",
+                                                "Bir seçenek yazın:\n\n" + "\n".join(options))
+        if selectedOption.lower() in loweroptions:
+            print(selectedOption)
+
+        else:
+
+            # Geçersiz seçim mesajı gösterme
+            messagebox.showerror("Hata", "Geçersiz seçim!")
+
+    else:
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
+    canvasFunc()
     entryDöviz.delete(0, tk.END)
     entryDöviz.insert(0, "")
     entryDöviz.config(fg="black")
 
 
+
+
 def butonDovizParaCek():
     print("döviz çek")
+    options = []
+    for i in myDatas:
+        options.append(i[1])
+    loweroptions = [s.lower() for s in options]
+
+    selectedOption = simpledialog.askstring("Hesaptan Çekilecek Döviz","Bir seçenek yazın:\n\n" + "\n".join(options))
+    if selectedOption.lower() in loweroptions:
+        print(selectedOption)
+
+
+    else:
+
+        # Geçersiz seçim mesajı gösterme
+        messagebox.showerror("Hata", "Geçersiz seçim!")
+
+
+
+    if toplamVarlıklar == 0:
+        arc = myCanvas.create_arc(coord, start=0, extent=359.99, fill="white")
+    else:
+        canvasFunc()
     entryDöviz.delete(0, tk.END)
     entryDöviz.insert(0, "Miktar Girin")
     entryDöviz.config(fg="grey")
 
 
+
 def butonAltınParaYatır():
     print("altın yaıtr")
-    entryAltın.delete(0, tk.END)
-    entryAltın.insert(0, "Miktar Girin")
-    entryAltın.config(fg="grey")
 
+    if entryAltın.get().isdigit() and entryAltın.get() != "0":
+        options = []
+        for i in myDatas2:
+            options.append(i[0])
+        loweroptions = [s.lower() for s in options]
+
+        selectedOption = simpledialog.askstring("Hesaba Yatırılcak Altın",
+                                                "Bir seçenek yazın:\n\n" + "\n".join(options))
+        if selectedOption.lower() in loweroptions:
+            print(selectedOption)
+
+        else:
+
+            # Geçersiz seçim mesajı gösterme
+            messagebox.showerror("Hata", "Geçersiz seçim!")
+    else:
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
+
+
+
+    canvasFunc()
+    entryAltın.delete(0, tk.END)
+    entryAltın.insert(0, "Altın Adeti Girin")
+    entryAltın.config(fg="grey")
 def butonAltınParaCek():
     print("altın çek")
+
+    options = []
+    for i in myDatas2:
+        options.append(i[0])
+    loweroptions = [s.lower() for s in options]
+
+    selectedOption = simpledialog.askstring("Hesaptan Çekilecek Altın","Bir seçenek yazın:\n\n" + "\n".join(options))
+    if selectedOption.lower() in loweroptions:
+        print(selectedOption)
+
+    else:
+
+        # Geçersiz seçim mesajı gösterme
+        messagebox.showerror("Hata", "Geçersiz seçim!")
+
+    if toplamVarlıklar == 0:
+        arc = myCanvas.create_arc(coord, start=0, extent=359.99, fill="white")
+    else:
+        canvasFunc()
     entryAltın.delete(0, tk.END)
-    entryAltın.insert(0, "Miktar Girin")
+    entryAltın.insert(0, "Altın Adeti Girin")
     entryAltın.config(fg="grey")
+
+
 #Anlık kur gösteren infomessage func
 kurlarStr = ""
 for i in myDatas:
@@ -231,7 +357,17 @@ def showInfoMessage():
     messagebox.showinfo(f"{formattedDate}Tarihi Anlık Kurlar",kurlarStr),
 
 
-
+"""
+#Açılır Kutu
+acilir_kutu = tk.StringVar()
+acilir_kutu = ttk.Combobox(
+    pencere,
+    textvariable=acilir_kutu,
+    values=("Euro","US Dollar","British Pound","Bulgarian Lev","Russian Ruble","Qatari Riyal","Mexican Peso","Canadian Dollar","Kuwaiti Dinar"),
+    state="readonly"
+)
+acilir_kutu.grid(row=4,column=2,pady=100)
+"""
 
 etiket = tk.Label(
     pencere, #Butonun ekleneceği yer
@@ -427,20 +563,20 @@ def entryCikildidoviz(event):
         entryDöviz.insert(0, "Miktar Girin")
         entryDöviz.config(fg="grey")
 def entryTiklandialtin(event):
-    if entryAltın.get() == "Miktar Girin":
+    if entryAltın.get() == "Altın Adeti Girin":
         entryAltın.delete(0,tk.END)
         entryAltın.config(fg="black")
 def entryCikildialtin(event):
-    if entryAltın.get() != "Miktar Girin":
+    if entryAltın.get() != "Altın Adeti Girin":
         entryAltın.delete(0, tk.END)
-        entryAltın.insert(0, "Miktar Girin")
+        entryAltın.insert(0, "Altın Adeti Girin")
         entryAltın.config(fg="grey")
 
 entryTl.insert(0,"Miktar Girin")
 entryTl.config(fg="grey")
 entryDöviz.insert(0,"Miktar Girin")
 entryDöviz.config(fg="grey")
-entryAltın.insert(0,"Miktar Girin")
+entryAltın.insert(0,"Altın Adeti Girin")
 entryAltın.config(fg="grey")
 
 entryTl.bind('<FocusIn>',entryTiklandi)
