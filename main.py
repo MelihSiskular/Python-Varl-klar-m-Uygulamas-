@@ -99,9 +99,13 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Paramız
                 (name TEXT,value INTEGER)''')
 cur.execute('''CREATE TABLE IF NOT EXISTS Tarihler
                 (date TEXT,value INTEGER)''')
-
+cur.execute('''CREATE TABLE IF NOT EXISTS Dövizlerimiz
+                (name TEXT,value FLOAT)''')
+cur.execute('''CREATE TABLE IF NOT EXISTS Altınlarımız
+                (name TEXT,value FLOAT)''')
 #Tabloda verimiz varmı yokmu diye kontrol ediyor
 
+#-----------TÜRK LİRASI - DÖVİZ - ALTIN KONTROLÜ-----------
 cur.execute('''SELECT * FROM Paramız WHERE name = ?''',("Türk Lirası",))
 row1 = cur.fetchone()
 print(row1)
@@ -135,6 +139,18 @@ else:
     cur.execute('''INSERT INTO Paramız(name,value)
     VALUES(?, ?)''',("Altın",0))
     tablo.commit()
+
+#DETAYLI DÖVİZ VE ALTIN TABLOSU
+
+
+
+
+
+
+
+
+
+
 
 #SQL Tarihler tablosuna uygulama her açıldığında eklenecek
 cur.execute('''INSERT INTO Tarihler(date,value)
@@ -267,20 +283,28 @@ def butonDovizParaYatır():
 
 def butonDovizParaCek():
     print("döviz çek")
-    options = []
-    for i in myDatas:
-        options.append(i[1])
-    loweroptions = [s.lower() for s in options]
 
-    selectedOption = simpledialog.askstring("Hesaptan Çekilecek Döviz","Bir seçenek yazın:\n\n" + "\n".join(options))
-    if selectedOption.lower() in loweroptions:
-        print(selectedOption)
+    if entryDöviz.get().isdigit() and entryDöviz.get() != "0":
+        options = []
+        for i in myDatas:
+            options.append(i[1])
+        loweroptions = [s.lower() for s in options]
+
+        selectedOption = simpledialog.askstring("Hesaptan Çekilecek Döviz",
+                                                "Bir seçenek yazın:\n\n" + "\n".join(options))
+        if selectedOption.lower() in loweroptions:
+            print(selectedOption)
 
 
+        else:
+
+            # Geçersiz seçim mesajı gösterme
+            messagebox.showerror("Hata", "Geçersiz seçim!")
     else:
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
 
-        # Geçersiz seçim mesajı gösterme
-        messagebox.showerror("Hata", "Geçersiz seçim!")
+
+
 
 
 
@@ -324,19 +348,24 @@ def butonAltınParaYatır():
 def butonAltınParaCek():
     print("altın çek")
 
-    options = []
-    for i in myDatas2:
-        options.append(i[0])
-    loweroptions = [s.lower() for s in options]
+    if entryAltın.get().isdigit() and entryAltın.get() != "0":
+        options = []
+        for i in myDatas2:
+            options.append(i[0])
+        loweroptions = [s.lower() for s in options]
 
-    selectedOption = simpledialog.askstring("Hesaptan Çekilecek Altın","Bir seçenek yazın:\n\n" + "\n".join(options))
-    if selectedOption.lower() in loweroptions:
-        print(selectedOption)
+        selectedOption = simpledialog.askstring("Hesaptan Çekilecek Altın",
+                                                "Bir seçenek yazın:\n\n" + "\n".join(options))
+        if selectedOption.lower() in loweroptions:
+            print(selectedOption)
+
+        else:
+
+            # Geçersiz seçim mesajı gösterme
+            messagebox.showerror("Hata", "Geçersiz seçim!")
 
     else:
-
-        # Geçersiz seçim mesajı gösterme
-        messagebox.showerror("Hata", "Geçersiz seçim!")
+        messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
 
     if toplamVarlıklar == 0:
         arc = myCanvas.create_arc(coord, start=0, extent=359.99, fill="white")
@@ -446,7 +475,8 @@ etiketDate = tk.Label(
     pencere,
     text=formattedDate,
     font= dateFont,
-    fg= "black"
+    fg= "black",
+    anchor="s"
 )
 
 türkLirasıYatır = tk.Button(
