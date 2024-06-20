@@ -19,7 +19,7 @@ conn2 = http.client.HTTPSConnection("api.collectapi.com") #Altın için
 
 headers = {
     'content-type': "application/json",
-    'authorization': "apikey 0o8b4AIoUpmBnQLm8mCOwB:4WX1nyxRV99VnhgsDmM8tr"
+    'authorization': "apikey 2fs6zshAYFYRR2OISZHqEV:5HeoZPsQ0xO5EKc39VOSSl"
 
     }
 
@@ -66,10 +66,29 @@ for i in myDatas2:
 
 #---------------------------- APİ İŞLEMLERİ BİTTİ ŞİMDİ TKİNTER VE SQL ------------------------------------------
 
+
+#Properties
+
+euro = 0
+usDollar = 0
+britishPound = 0
+bulgarianLev = 0
+russianRuble = 0
+qatariRiyal = 0
+mexicanPeso = 0
+canadianDollar = 0
+kuwaitiDinar= 0
+gramAltin = 0
+ceyrekAltin = 0
+yarımAltin = 0
+tamAltin = 0
+
+
 türkLirası = 0
 döviz = 0
 altın = 0
 toplamVarlıklar = türkLirası + döviz + altın
+
 
 #Date
 locale.setlocale(locale.LC_TIME, 'tr_TR.UTF-8')
@@ -80,7 +99,7 @@ formattedDate = now.strftime("%d %B %Y, %H:%M")
 
 #Pencere oluşumu
 pencere = tk.Tk()
-pencere.geometry("950x720")
+pencere.geometry("1020x720")
 pencere.title("Varlıklarım Uygulaması") #En tepedeki pencere titlesi
 
 
@@ -103,12 +122,15 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Dövizlerimiz
                 (name TEXT,value FLOAT)''')
 cur.execute('''CREATE TABLE IF NOT EXISTS Altınlarımız
                 (name TEXT,value FLOAT)''')
+
+
+
+
 #Tabloda verimiz varmı yokmu diye kontrol ediyor
 
 #-----------TÜRK LİRASI - DÖVİZ - ALTIN KONTROLÜ-----------
 cur.execute('''SELECT * FROM Paramız WHERE name = ?''',("Türk Lirası",))
 row1 = cur.fetchone()
-print(row1)
 if row1:
     türkLirası = row1[1]
 
@@ -120,7 +142,6 @@ else:
 
 cur.execute('''SELECT * FROM Paramız WHERE name = ?''',("Döviz",))
 row2 = cur.fetchone()
-print(row2)
 if row2:
     döviz = row2[1]
 
@@ -131,7 +152,6 @@ else:
 
 cur.execute('''SELECT * FROM Paramız WHERE name = ?''',("Altın",))
 row3 = cur.fetchone()
-print(row3)
 if row3:
     altın = row3[1]
 
@@ -140,13 +160,121 @@ else:
     VALUES(?, ?)''',("Altın",0))
     tablo.commit()
 
+
+
 #DETAYLI DÖVİZ VE ALTIN TABLOSU
 
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Euro",))
+fetchEuro = cur.fetchone()
+if fetchEuro:
+    euro = fetchEuro[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Euro", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Us dollar",))
+fetchUsDollar = cur.fetchone()
+if fetchUsDollar:
+    usDollar = fetchUsDollar[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Us dollar", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("British pound",))
+fetchBritishPound = cur.fetchone()
+if fetchBritishPound:
+    britishPound = fetchBritishPound[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("British pound", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Bulgarian lev",))
+fetchBulgarianLev = cur.fetchone()
+if fetchBulgarianLev:
+    bulgarianLev = fetchBulgarianLev[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Bulgarian lev", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Russian ruble",))
+fetchRussianRuble = cur.fetchone()
+if fetchRussianRuble:
+    russianRuble = fetchRussianRuble[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Russian ruble", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Qatari riyal",))
+fetchQatariRiyal = cur.fetchone()
+if fetchQatariRiyal:
+    qatariRiyal = fetchQatariRiyal[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Qatari riyal", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Mexican peso",))
+fetchMexicanPeso = cur.fetchone()
+if fetchMexicanPeso:
+    mexicanPeso = fetchMexicanPeso[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Mexican peso", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Canadian dollar",))
+fetchCanadianDollar = cur.fetchone()
+if fetchCanadianDollar:
+    canadianDollar = fetchCanadianDollar[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Canadian dollar", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Dövizlerimiz WHERE name = ?''', ("Kuwaiti dinar",))
+fetchKuwaitiDinar = cur.fetchone()
+if fetchKuwaitiDinar:
+    kuwaitiDinar = fetchKuwaitiDinar[1]
+else:
+    cur.execute("""INSERT INTO Dövizlerimiz(name,value) VALUES(?, ?)""", ("Kuwaiti dinar", 0))
+    tablo.commit()
 
 
 
 
+cur.execute('''SELECT * FROM Altınlarımız WHERE name = ?''', ("Gram Altın",))
+fetchGramAltin = cur.fetchone()
+if fetchGramAltin:
+    gramAltin = fetchGramAltin[1]
+else:
+    cur.execute("""INSERT INTO Altınlarımız(name,value) VALUES(?, ?)""", ("Gram Altın", 0))
+    tablo.commit()
 
+cur.execute('''SELECT * FROM Altınlarımız WHERE name = ?''', ("Çeyrek Altın",))
+fetchCeyrekAltin = cur.fetchone()
+if fetchCeyrekAltin:
+    ceyrekAltin = fetchCeyrekAltin[1]
+else:
+    cur.execute("""INSERT INTO Altınlarımız(name,value) VALUES(?, ?)""", ("Çeyrek Altın", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Altınlarımız WHERE name = ?''', ("Yarım Altın",))
+fetchYarimAltin = cur.fetchone()
+if fetchYarimAltin:
+    yarımAltin = fetchYarimAltin[1]
+else:
+    cur.execute("""INSERT INTO Altınlarımız(name,value) VALUES(?, ?)""", ("Yarım Altın", 0))
+    tablo.commit()
+
+cur.execute('''SELECT * FROM Altınlarımız WHERE name = ?''', ("Tam Altın",))
+fetchTamAltin = cur.fetchone()
+if fetchTamAltin:
+    tamAltin = fetchTamAltin[1]
+else:
+    cur.execute("""INSERT INTO Altınlarımız(name,value) VALUES(?, ?)""", ("Tam Altın", 0))
+    tablo.commit()
+
+
+
+döviz = round((euro * myDatas[0][0]) + (usDollar * myDatas[1][0])  + (britishPound * myDatas[2][0]) + (bulgarianLev * myDatas[3][0]) + (russianRuble * myDatas[4][0]) + (qatariRiyal * myDatas[5][0]) + (mexicanPeso * myDatas[6][0]) + (canadianDollar * myDatas[7][0]) + (kuwaitiDinar * myDatas[8][0]),2)
+altın = round((gramAltin * myDatas2[0][1]) + (ceyrekAltin * myDatas2[1][1]) + (yarımAltin * myDatas2[2][1]) + (tamAltin * myDatas2[3][1]),2)
 
 
 
@@ -164,17 +292,25 @@ cur.execute("""UPDATE Tarihler
 tablo.commit()
 
 
+#Kar-Zarar durumu
+cur.execute("""SELECT value FROM Tarihler""")
+fetchLastValue = cur.fetchall()
+sonKayitliPara = (fetchLastValue[-2][0]) # -1 olan son kayıtlı olan yeni girerkenki önceki -2 olur
 
 
+karZarar = toplamVarlıklar - sonKayitliPara
+print(karZarar)
 
 
 #Her güncellemede çağrılcak func
 def canvasFunc():
-    arc = myCanvas.create_arc(coord, start=0, extent=((türkLirası * 360) / toplamVarlıklar-0.0001) - 0.0001, fill="red")
+
+
+    arc = myCanvas.create_arc(coord, start=0, extent=((türkLirası * 360) / toplamVarlıklar-0.0001), fill="red")
     arv2 = myCanvas.create_arc(coord, start=((türkLirası * 360) / toplamVarlıklar - 0.0001),
                                extent=((döviz * 360) / toplamVarlıklar - 0.001), fill="blue")
-    arv3 = myCanvas.create_arc(coord, start=((döviz * 360) / toplamVarlıklar - 0.001) + ((türkLirası * 360) / toplamVarlıklar - 0.001)- 0.0001,
-                               extent=((altın * 360) / toplamVarlıklar - 0.001)- 0.0001, fill="yellow")
+    arv3 = myCanvas.create_arc(coord, start=((döviz * 360) / toplamVarlıklar - 0.001) + ((türkLirası * 360) / toplamVarlıklar - 0.001),
+                               extent=((altın * 360) / toplamVarlıklar - 0.001), fill="yellow")
 
 
 
@@ -256,6 +392,8 @@ def butonDovizParaYatır():
     print("döviz yaıtr")
 
     if entryDöviz.get().isdigit() and entryDöviz.get() != "0":
+        yatirilcakTutar = int(entryDöviz.get())
+        global toplamVarlıklar
         options = []
         for i in myDatas:
             options.append(i[1])
@@ -263,8 +401,102 @@ def butonDovizParaYatır():
 
         selectedOption = simpledialog.askstring("Hesaba Yatırılcak Döviz",
                                                 "Bir seçenek yazın:\n\n" + "\n".join(options))
+        print(selectedOption.lower().capitalize())
+
         if selectedOption.lower() in loweroptions:
-            print(selectedOption)
+            cur.execute("""UPDATE Dövizlerimiz
+                   SET value = ?
+                   WHERE name = ?
+                   """, (yatirilcakTutar, f"{selectedOption.capitalize()}"))
+            tablo.commit()
+
+
+
+            if selectedOption.lower().capitalize() == "Euro":
+                global euro
+                euro += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (euro, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Us dollar":
+                global usDollar
+                usDollar += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (usDollar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "British pound":
+                global britishPound
+                britishPound += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (britishPound, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Bulgarian lev":
+                global bulgarianLev
+                bulgarianLev += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (bulgarianLev, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Russian ruble":
+                global russianRuble
+                russianRuble += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (russianRuble, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Qatari riyal":
+                global qatariRiyal
+                qatariRiyal += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (qatariRiyal, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Mexican peso":
+                global mexicanPeso
+                mexicanPeso += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (mexicanPeso, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Canadian dollar":
+                global canadianDollar
+                canadianDollar += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (canadianDollar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Kuwaiti dinar":
+                global kuwaitiDinar
+                kuwaitiDinar += yatirilcakTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (kuwaitiDinar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            döviz = round((euro * myDatas[0][0]) + (usDollar * myDatas[1][0]) + (britishPound * myDatas[2][0]) + (
+                        bulgarianLev * myDatas[3][0]) + (russianRuble * myDatas[4][0]) + (
+                                qatariRiyal * myDatas[5][0]) + (mexicanPeso * myDatas[6][0]) + (
+                                canadianDollar * myDatas[7][0]) + (kuwaitiDinar * myDatas[8][0]),2)
+            toplamVarlıklar = türkLirası + döviz + altın
+            etiket3.config(text=f"{round(toplamVarlıklar,2)} Türk Lirası")
+            etiket7.config(text=f"{döviz} Türk Lirası")
+
+            cur.execute("""UPDATE Tarihler
+                       SET value = ?
+                       WHERE date = ?
+                       """, (toplamVarlıklar, f"{formattedDate}"))
+            tablo.commit()
 
         else:
 
@@ -285,6 +517,7 @@ def butonDovizParaCek():
     print("döviz çek")
 
     if entryDöviz.get().isdigit() and entryDöviz.get() != "0":
+        cekilecekTutar = int(entryDöviz.get())
         options = []
         for i in myDatas:
             options.append(i[1])
@@ -293,7 +526,92 @@ def butonDovizParaCek():
         selectedOption = simpledialog.askstring("Hesaptan Çekilecek Döviz",
                                                 "Bir seçenek yazın:\n\n" + "\n".join(options))
         if selectedOption.lower() in loweroptions:
-            print(selectedOption)
+            if selectedOption.lower().capitalize() == "Euro":
+                global euro
+                euro -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (euro, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Us dollar":
+                global usDollar
+                usDollar -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (usDollar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "British pound":
+                global britishPound
+                britishPound -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (britishPound, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Bulgarian lev":
+                global bulgarianLev
+                bulgarianLev -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (bulgarianLev, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Russian ruble":
+                global russianRuble
+                russianRuble -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (russianRuble, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Qatari riyal":
+                global qatariRiyal
+                qatariRiyal -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (qatariRiyal, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Mexican peso":
+                global mexicanPeso
+                mexicanPeso -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (mexicanPeso, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Canadian dollar":
+                global canadianDollar
+                canadianDollar -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (canadianDollar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+            elif selectedOption.lower().capitalize() == "Kuwaiti dinar":
+                global kuwaitiDinar
+                kuwaitiDinar -= cekilecekTutar
+                cur.execute("""UPDATE Dövizlerimiz
+                                   SET value = ?
+                                   WHERE name = ?
+                                   """, (kuwaitiDinar, f"{selectedOption.capitalize()}"))
+                tablo.commit()
+
+            döviz = round((euro * myDatas[0][0]) + (usDollar * myDatas[1][0]) + (britishPound * myDatas[2][0]) + (
+                    bulgarianLev * myDatas[3][0]) + (russianRuble * myDatas[4][0]) + (
+                                  qatariRiyal * myDatas[5][0]) + (mexicanPeso * myDatas[6][0]) + (
+                                  canadianDollar * myDatas[7][0]) + (kuwaitiDinar * myDatas[8][0]), 2)
+            toplamVarlıklar = türkLirası + döviz + altın
+            etiket3.config(text=f"{round(toplamVarlıklar, 3)} Türk Lirası")
+            etiket7.config(text=f"{döviz} Türk Lirası")
+
+            cur.execute("""UPDATE Tarihler
+                         SET value = ?
+                         WHERE date = ?
+                         """, (toplamVarlıklar, f"{formattedDate}"))
+            tablo.commit()
 
 
         else:
@@ -302,8 +620,6 @@ def butonDovizParaCek():
             messagebox.showerror("Hata", "Geçersiz seçim!")
     else:
         messagebox.showerror("HATA", "Geçerli Bir Değer Girin")
-
-
 
 
 
@@ -319,9 +635,10 @@ def butonDovizParaCek():
 
 
 def butonAltınParaYatır():
-    print("altın yaıtr")
+    print("altın yatır")
 
     if entryAltın.get().isdigit() and entryAltın.get() != "0":
+        yatirilcakAdet = int(entryAltın.get())
         options = []
         for i in myDatas2:
             options.append(i[0])
@@ -329,8 +646,60 @@ def butonAltınParaYatır():
 
         selectedOption = simpledialog.askstring("Hesaba Yatırılcak Altın",
                                                 "Bir seçenek yazın:\n\n" + "\n".join(options))
+        print(selectedOption.title())
         if selectedOption.lower() in loweroptions:
-            print(selectedOption)
+            cur.execute("""UPDATE Altınlarımız
+                               SET value = ?
+                               WHERE name = ?
+                               """, (yatirilcakAdet, f"{selectedOption.title()}"))
+            tablo.commit()
+
+            if selectedOption.lower() == "gram altın":
+                global gramAltin
+                gramAltin += yatirilcakAdet
+                cur.execute("""UPDATE Altınlarımız
+                                              SET value = ?
+                                              WHERE name = ?
+                                              """, (gramAltin, f"{selectedOption.title()}"))
+                tablo.commit()
+            elif selectedOption.lower() == "çeyrek altın":
+                global ceyrekAltin
+                ceyrekAltin += yatirilcakAdet
+                cur.execute("""UPDATE Altınlarımız
+                                              SET value = ?
+                                              WHERE name = ?
+                                              """, (ceyrekAltin, f"{selectedOption.title()}"))
+                tablo.commit()
+            elif selectedOption.lower() == "yarım altın":
+                global yarımAltin
+                yarımAltin += yatirilcakAdet
+                cur.execute("""UPDATE Altınlarımız
+                                              SET value = ?
+                                              WHERE name = ?
+                                              """, (yarımAltin, f"{selectedOption.title()}"))
+                tablo.commit()
+            elif selectedOption.lower() == "tam altın":
+                global tamAltin
+                tamAltin += yatirilcakAdet
+                cur.execute("""UPDATE Altınlarımız
+                                              SET value = ?
+                                              WHERE name = ?
+                                              """, (tamAltin, f"{selectedOption.title()}"))
+                tablo.commit()
+            altın = round(
+                (gramAltin * myDatas2[0][1]) + (ceyrekAltin * myDatas2[1][1]) + (yarımAltin * myDatas2[2][1]) + (
+                            tamAltin * myDatas2[3][1]), 2)
+
+            toplamVarlıklar = türkLirası + döviz + altın
+            etiket3.config(text=f"{round(toplamVarlıklar,3)} Türk Lirası")
+            etiket9.config(text=f"{altın} Türk Lirası")
+
+            cur.execute("""UPDATE Tarihler
+                         SET value = ?
+                         WHERE date = ?
+                         """, (toplamVarlıklar, f"{formattedDate}"))
+            tablo.commit()
+
 
         else:
 
@@ -349,6 +718,7 @@ def butonAltınParaCek():
     print("altın çek")
 
     if entryAltın.get().isdigit() and entryAltın.get() != "0":
+        cekilecekAdet = int(entryAltın.get())
         options = []
         for i in myDatas2:
             options.append(i[0])
@@ -357,8 +727,65 @@ def butonAltınParaCek():
         selectedOption = simpledialog.askstring("Hesaptan Çekilecek Altın",
                                                 "Bir seçenek yazın:\n\n" + "\n".join(options))
         if selectedOption.lower() in loweroptions:
-            print(selectedOption)
+            if selectedOption.title() == "Gram Altın":
+                global gramAltin
+                if cekilecekAdet <= gramAltin:
+                    gramAltin -= cekilecekAdet
+                    cur.execute("""UPDATE Altınlarımız
+                                                  SET value = ?
+                                                  WHERE name = ?
+                                                  """, (gramAltin, f"{selectedOption.title()}"))
+                    tablo.commit()
 
+                else:
+                    messagebox.showerror("HATA", "Yeterli Para Yok")
+            elif selectedOption.title() == "Çeyrek Altın":
+                global ceyrekAltin
+                if cekilecekAdet <= ceyrekAltin:
+                    ceyrekAltin -= cekilecekAdet
+                    cur.execute("""UPDATE Altınlarımız
+                                                  SET value = ?
+                                                  WHERE name = ?
+                                                  """, (ceyrekAltin, f"{selectedOption.title()}"))
+                    tablo.commit()
+                else:
+                    messagebox.showerror("HATA", "Yeterli Para Yok")
+            elif selectedOption.title() == "Yarım Altın":
+                global yarımAltin
+                if cekilecekAdet <= yarımAltin:
+
+                    yarımAltin -= cekilecekAdet
+                    cur.execute("""UPDATE Altınlarımız
+                                                  SET value = ?
+                                                  WHERE name = ?
+                                                  """, (yarımAltin, f"{selectedOption.title()}"))
+                    tablo.commit()
+                else:
+                    messagebox.showerror("HATA", "Yeterli Para Yok")
+            elif selectedOption.title() == "Tam Altın":
+                global tamAltin
+                if cekilecekAdet <= tamAltin:
+                    tamAltin -= cekilecekAdet
+                    cur.execute("""UPDATE Altınlarımız
+                                                  SET value = ?
+                                                  WHERE name = ?
+                                                  """, (tamAltin, f"{selectedOption.title()}"))
+                    tablo.commit()
+                else:
+                    messagebox.showerror("HATA", "Yeterli Para Yok")
+
+            altın = round(
+                (gramAltin * myDatas2[0][1]) + (ceyrekAltin * myDatas2[1][1]) + (yarımAltin * myDatas2[2][1]) + (
+                            tamAltin * myDatas2[3][1]), 2)
+
+            toplamVarlıklar = türkLirası + döviz + altın
+            cur.execute("""UPDATE Tarihler
+                                       SET value = ?
+                                       WHERE date = ?
+                                       """, (toplamVarlıklar, f"{formattedDate}"))
+            tablo.commit()
+            etiket3.config(text=f"{toplamVarlıklar} Türk Lirası")
+            etiket9.config(text=f"{altın} Türk Lirası")
         else:
 
             # Geçersiz seçim mesajı gösterme
@@ -417,7 +844,7 @@ etiket2 = tk.Label(
 )
 etiket3 = tk.Label(
     pencere, #Butonun ekleneceği yer
-    text = f"{toplamVarlıklar} Türk Lirası",
+    text = f"{round(toplamVarlıklar,2)} Türk Lirası",
     font= titleFont,
     fg = "black",
 
